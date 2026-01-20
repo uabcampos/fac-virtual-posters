@@ -80,7 +80,7 @@ export function PosterViewer({ imageUrl, pdfUrl }: PosterViewerProps) {
                                         >
                                             <Page
                                                 pageNumber={pageNumber}
-                                                renderMode="svg"
+                                                renderMode={"svg" as any}
                                                 width={1000} // Base width for coordinates, transform-wrapper handles zooming
                                                 className="max-w-full h-auto"
                                                 loading={null}

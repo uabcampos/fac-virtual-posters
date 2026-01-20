@@ -99,7 +99,7 @@ export default async function PosterDetailPage({ params }: PosterDetailPageProps
                 </div>
 
                 <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-start">
-                    {/* Left Column: Poster & Summary */}
+                    {/* Left Column: Poster & Conversation */}
                     <div className="lg:col-span-8 flex flex-col gap-10">
                         <section>
                             <h1 className="mb-4 text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl dark:text-zinc-100">
@@ -114,26 +114,20 @@ export default async function PosterDetailPage({ params }: PosterDetailPageProps
                             <PosterViewer imageUrl={poster.posterImageUrl} pdfUrl={poster.posterPdfUrl} />
                         </section>
 
-                        <section className="rounded-3xl bg-zinc-50 p-8 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800">
-                            <h2 className="mb-8 flex items-center gap-2 text-xl font-bold text-zinc-900 dark:text-zinc-100">
-                                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-brand-blue dark:bg-blue-900/40 dark:text-blue-400">
-                                    <Hash className="h-4 w-4" />
+                        {/* Highlighted Conversation Panel */}
+                        <section className="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-zinc-200 dark:bg-zinc-900 dark:ring-zinc-800 flex flex-col min-h-[600px]">
+                            <h2 className="text-2xl font-black text-zinc-900 dark:text-zinc-100 mb-8 flex items-center gap-3">
+                                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-blue text-white shadow-lg shadow-brand-blue/20">
+                                    <Hash className="h-5 w-5" />
                                 </span>
-                                5-Minute Summary
+                                Join the Conversation
                             </h2>
-
-                            <div className="space-y-8">
-                                <SummaryField title="What problem does this address?" content={poster.summaryProblem} />
-                                <SummaryField title="Who does it matter to?" content={poster.summaryAudience} />
-                                <SummaryField title="What did you do?" content={poster.summaryMethods} />
-                                <SummaryField title="What did you find?" content={poster.summaryFindings} />
-                                <SummaryField title="What could this change?" content={poster.summaryChange} />
-                            </div>
+                            <ConversationPanel posterId={poster.id} scholarName={poster.scholarNames[0]} />
                         </section>
                     </div>
 
-                    {/* Right Column: Scholar & Conversation (Sticky) */}
-                    <div className="lg:col-span-4 lg:sticky lg:top-8 flex flex-col gap-8">
+                    {/* Right Column: Scholar & Compact Summary (Sticky) */}
+                    <div className="lg:col-span-4 lg:sticky lg:top-8 flex flex-col gap-6">
                         {/* Scholar Presence */}
                         <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-zinc-200 dark:bg-zinc-900 dark:ring-zinc-800">
                             <div className="mb-6 flex items-center gap-4">
@@ -170,11 +164,23 @@ export default async function PosterDetailPage({ params }: PosterDetailPageProps
                             )}
                         </div>
 
-                        {/* Conversation Panel */}
-                        <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-zinc-200 dark:bg-zinc-900 dark:ring-zinc-800 flex-1 overflow-hidden flex flex-col min-h-[500px]">
-                            <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-6">Conversation</h3>
-                            <ConversationPanel posterId={poster.id} scholarName={poster.scholarNames[0]} />
-                        </div>
+                        {/* Compact 5-Minute Summary */}
+                        <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-zinc-200 dark:bg-zinc-900 dark:ring-zinc-800">
+                            <h2 className="mb-6 flex items-center gap-2 text-lg font-bold text-zinc-900 dark:text-zinc-100">
+                                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-brand-blue dark:bg-blue-900/40 dark:text-blue-400">
+                                    <Hash className="h-3.5 w-3.5" />
+                                </span>
+                                5-Minute Summary
+                            </h2>
+
+                            <div className="space-y-6">
+                                <SummaryField title="The Problem" content={poster.summaryProblem} compact />
+                                <SummaryField title="Target Audience" content={poster.summaryAudience} compact />
+                                <SummaryField title="Methodology" content={poster.summaryMethods} compact />
+                                <SummaryField title="Key Findings" content={poster.summaryFindings} compact />
+                                <SummaryField title="The Impact" content={poster.summaryChange} compact />
+                            </div>
+                        </section>
                     </div>
                 </div>
             </div>
@@ -182,7 +188,20 @@ export default async function PosterDetailPage({ params }: PosterDetailPageProps
     )
 }
 
-function SummaryField({ title, content }: { title: string; content: string }) {
+function SummaryField({ title, content, compact = false }: { title: string; content: string; compact?: boolean }) {
+    if (compact) {
+        return (
+            <div>
+                <h3 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-1">
+                    {title}
+                </h3>
+                <div className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+                    {content}
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div>
             <h3 className="text-sm font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-3">

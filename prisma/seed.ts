@@ -13,7 +13,7 @@ async function main() {
     const session = await prisma.session.create({
         data: {
             name: 'FAC Summer 2026 Virtual Poster Session',
-            slug: 'summer-2026',
+            slug: 'live-session',
             status: SessionStatus.LIVE,
             startAt: new Date(),
             endAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),

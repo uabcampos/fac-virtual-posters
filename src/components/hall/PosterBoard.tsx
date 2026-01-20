@@ -25,14 +25,14 @@ export function PosterBoard({ poster, sessionSlug, index }: PosterBoardProps) {
             >
                 {/* Square Poster Board Frame */}
                 <div className="relative w-[380px] h-[380px] bg-white dark:bg-zinc-900 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] ring-1 ring-zinc-200 dark:ring-zinc-800 overflow-hidden transition-all duration-300 group-hover:scale-[1.05] group-hover:shadow-[0_30px_60px_rgba(0,0,0,0.4)] group-hover:ring-blue-500/50">
-                    {/* Poster Image - Centered and Sharp */}
-                    <div className="absolute inset-6 flex items-center justify-center bg-zinc-50 dark:bg-zinc-800/50 rounded-lg overflow-hidden pointer-events-none">
+                    {/* Poster Image - Perfect Centering */}
+                    <div className="absolute inset-8 flex items-center justify-center rounded-lg overflow-hidden pointer-events-none">
                         {poster.posterImageUrl ? (
                             <Image
                                 src={poster.posterImageUrl}
                                 alt={poster.title}
                                 fill
-                                className="object-cover transition-all duration-700 group-hover:scale-110"
+                                className="object-contain transition-all duration-500"
                                 sizes="380px"
                                 priority={index < 4}
                             />

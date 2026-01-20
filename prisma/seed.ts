@@ -65,8 +65,8 @@ async function main() {
                 status: PosterStatus.PUBLISHED,
                 publishedAt: new Date(),
                 posterPdfUrl: `/uploads/${p.file}`,
-                // Using a high-quality vertical placeholder for the UI while the PDF is the main asset
-                posterImageUrl: `https://picsum.photos/seed/${slug}/1200/1800`,
+                // Using a branded placeholder for the gallery thumbnails
+                posterImageUrl: '/poster-placeholder.png',
                 posterImageWidth: 1200,
                 posterImageHeight: 1800,
             },

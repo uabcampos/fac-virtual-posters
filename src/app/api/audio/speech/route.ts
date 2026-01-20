@@ -41,9 +41,9 @@ export async function POST(request: Request) {
 
         if (!response.ok) {
             const error = await response.json()
-            console.error('Google TTS Error:', error)
+            console.error('Google TTS Error Info:', JSON.stringify(error, null, 2))
             return NextResponse.json(
-                { error: 'Failed to synthesize speech' },
+                { error: error.error?.message || 'Failed to synthesize speech' },
                 { status: response.status }
             )
         }

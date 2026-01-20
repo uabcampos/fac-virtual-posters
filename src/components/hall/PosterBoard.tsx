@@ -21,46 +21,48 @@ export function PosterBoard({ poster, sessionSlug, index }: PosterBoardProps) {
         >
             <Link
                 href={`/sessions/${sessionSlug}/posters/${poster.slug}`}
-                className="group relative block"
+                className="group relative block flex flex-col items-center"
             >
-                {/* Square Poster Board Frame */}
-                <div className="relative w-[380px] h-[380px] bg-white dark:bg-zinc-900 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] ring-1 ring-zinc-200 dark:ring-zinc-800 overflow-hidden transition-all duration-300 group-hover:scale-[1.05] group-hover:shadow-[0_30px_60px_rgba(0,0,0,0.4)] group-hover:ring-blue-500/50">
-                    {/* Poster Image - Perfect Centering */}
-                    <div className="absolute inset-8 flex items-center justify-center rounded-lg overflow-hidden pointer-events-none">
+                {/* Square Poster Board Frame - Blended Dark Theme */}
+                <div className="relative w-[380px] h-[380px] bg-zinc-900/40 backdrop-blur-sm rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] ring-1 ring-white/10 overflow-hidden transition-all duration-300 group-hover:scale-[1.05] group-hover:shadow-blue-500/20 group-hover:ring-blue-500/40">
+                    {/* Inner Spotlight Glow on hover */}
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                    {/* Poster Image - Perfect Geometric Centering */}
+                    <div className="absolute inset-8 flex items-center justify-center pointer-events-none">
                         {poster.posterImageUrl ? (
-                            <Image
-                                src={poster.posterImageUrl}
-                                alt={poster.title}
-                                fill
-                                className="object-contain transition-all duration-500"
-                                sizes="380px"
-                                priority={index < 4}
-                            />
+                            <div className="relative w-full h-full flex items-center justify-center">
+                                <Image
+                                    src={poster.posterImageUrl}
+                                    alt={poster.title}
+                                    fill
+                                    className="object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-500"
+                                    sizes="380px"
+                                    priority={index < 4}
+                                />
+                            </div>
                         ) : (
-                            <div className="flex flex-col items-center gap-2 text-zinc-400">
+                            <div className="flex flex-col items-center gap-2 text-zinc-600">
                                 <span className="text-4xl font-black">{index + 1}</span>
                             </div>
                         )}
-
-                        {/* Overlay to prevent reading text clearly at rest */}
-                        <div className="absolute inset-0 bg-white/5 dark:bg-black/5 pointer-events-none" />
                     </div>
 
-                    {/* Subtle Board Texture/Shadow */}
-                    <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_40px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_0_40px_rgba(0,0,0,0.2)]" />
+                    {/* Glass Surface Reflect */}
+                    <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-white/5 to-transparent" />
                 </div>
 
-                {/* Label Strip - High Design Typography */}
-                <div className="mt-8 text-center space-y-2">
+                {/* Label Strip - Perfectly Centered Relative to Board */}
+                <div className="mt-10 text-center w-full max-w-[380px] flex flex-col items-center space-y-3">
                     <div className="inline-flex items-center gap-2">
-                        <span className="text-[10px] font-black text-blue-400 dark:text-blue-500 uppercase tracking-[0.3em] bg-blue-900/20 px-3 py-1 rounded-full ring-1 ring-blue-500/30 group-hover:bg-blue-600 group-hover:text-white group-hover:ring-blue-600 transition-all">
-                            Poster No. {index + 1}
+                        <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em] bg-blue-950/40 px-4 py-1.5 rounded-full ring-1 ring-blue-500/30 group-hover:bg-blue-600 group-hover:text-white group-hover:ring-blue-600 transition-all shadow-lg">
+                            POSTER NO. {index + 1}
                         </span>
                     </div>
-                    <h3 className="text-base font-black text-white line-clamp-1 px-6 tracking-tight group-hover:text-blue-400 transition-colors">
+                    <h3 className="text-lg font-black text-white line-clamp-2 px-6 tracking-tight leading-tight group-hover:text-blue-400 transition-colors">
                         {poster.title}
                     </h3>
-                    <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-[0.2em]">
+                    <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-[0.25em]">
                         {poster.scholarNames?.[0] || 'Researcher'}
                     </p>
                 </div>

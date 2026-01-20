@@ -8,14 +8,14 @@ import { PosterViewTracker } from '@/components/gallery/PosterViewTracker'
 import { PosterStatus } from '@prisma/client'
 
 interface PosterDetailPageProps {
-    params: {
+    params: Promise<{
         sessionSlug: string
         posterSlug: string
-    }
+    }>
 }
 
 export default async function PosterDetailPage({ params }: PosterDetailPageProps) {
-    const { sessionSlug, posterSlug } = params
+    const { sessionSlug, posterSlug } = await params
 
     const poster = await prisma.poster.findUnique({
         where: { slug: posterSlug },

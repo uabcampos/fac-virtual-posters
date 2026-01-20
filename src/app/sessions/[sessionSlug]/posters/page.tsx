@@ -5,19 +5,19 @@ import { notFound } from 'next/navigation'
 import { SessionStatus, PosterStatus } from '@prisma/client'
 
 interface GalleryPageProps {
-    params: {
+    params: Promise<{
         sessionSlug: string
-    }
-    searchParams: {
+    }>
+    searchParams: Promise<{
         q?: string
         tag?: string
         sort?: string
-    }
+    }>
 }
 
 export default async function GalleryPage({ params, searchParams }: GalleryPageProps) {
-    const { sessionSlug } = params
-    const { q, tag, sort } = searchParams
+    const { sessionSlug } = await params
+    const { q, tag, sort } = await searchParams
 
     const session = await prisma.session.findUnique({
         where: { slug: sessionSlug },

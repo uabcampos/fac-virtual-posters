@@ -14,9 +14,9 @@ const createCommentSchema = z.object({
 
 export async function GET(
     request: Request,
-    { params }: { params: { posterId: string } }
+    { params }: { params: Promise<{ posterId: string }> }
 ) {
-    const { posterId } = params
+    const { posterId } = await params
 
     try {
         const comments = await prisma.comment.findMany({
@@ -43,9 +43,9 @@ export async function GET(
 
 export async function POST(
     request: Request,
-    { params }: { params: { posterId: string } }
+    { params }: { params: Promise<{ posterId: string }> }
 ) {
-    const { posterId } = params
+    const { posterId } = await params
 
     try {
         const body = await request.json()

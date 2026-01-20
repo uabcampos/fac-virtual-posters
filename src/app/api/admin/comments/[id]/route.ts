@@ -3,10 +3,10 @@ import prisma from '@/lib/prisma'
 
 export async function DELETE(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = params
+        const { id } = await params
 
         // We also need to delete any replies to this comment to avoid foreign key issues
         // Note: If we had an 'isDeleted' flag, we might use that instead.

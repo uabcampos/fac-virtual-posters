@@ -100,12 +100,12 @@ export default async function PosterDetailPage({ params }: PosterDetailPageProps
 
                 <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-start">
                     {/* Left Column: Poster & Conversation */}
-                    <div className="lg:col-span-8 flex flex-col gap-10">
+                    <div className="lg:col-span-8 flex flex-col gap-6">
                         <section>
-                            <h1 className="mb-4 text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl dark:text-zinc-100">
+                            <h1 className="mb-2 text-xl font-extrabold tracking-tight text-zinc-900 sm:text-2xl dark:text-zinc-100">
                                 {poster.title}
                             </h1>
-                            <div className="mb-8 flex flex-wrap items-center gap-4 text-sm text-zinc-600 dark:text-zinc-400">
+                            <div className="mb-4 flex flex-wrap items-center gap-4 text-xs text-zinc-600 dark:text-zinc-400">
                                 <span className="font-bold text-zinc-900 dark:text-zinc-100">{poster.scholarNames.join(', ')}</span>
                                 <span className="hidden sm:inline">•</span>
                                 <span>{poster.institutions.join(', ')}</span>

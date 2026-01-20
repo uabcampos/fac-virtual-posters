@@ -50,10 +50,11 @@ export function PosterViewer({ imageUrl, pdfUrl }: PosterViewerProps) {
                 )}
 
                 <TransformWrapper
-                    initialScale={1}
-                    minScale={0.5}
+                    initialScale={0.6} // Start slightly zoomed out to see more
+                    minScale={0.4}
                     maxScale={5}
                     centerOnInit
+                    limitToBounds={false}
                 >
                     {({ zoomIn, zoomOut, resetTransform }) => (
                         <>
@@ -70,7 +71,7 @@ export function PosterViewer({ imageUrl, pdfUrl }: PosterViewerProps) {
                                 wrapperStyle={{ width: '100%', height: '100%' }}
                                 contentStyle={{ width: '100%', height: '100%' }}
                             >
-                                <div className="flex items-center justify-center h-full w-full p-4">
+                                <div className="flex items-center justify-center p-4">
                                     {pdfUrl ? (
                                         <Document
                                             file={pdfUrl}
@@ -81,8 +82,8 @@ export function PosterViewer({ imageUrl, pdfUrl }: PosterViewerProps) {
                                             <Page
                                                 pageNumber={pageNumber}
                                                 renderMode={"svg" as any}
-                                                width={1000} // Base width for coordinates, transform-wrapper handles zooming
-                                                className="max-w-full h-auto"
+                                                width={1200} // High res for zooming
+                                                className="max-w-none h-auto"
                                                 loading={null}
                                             />
                                         </Document>

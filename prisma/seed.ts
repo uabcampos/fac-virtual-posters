@@ -1,4 +1,4 @@
-import { PrismaClient, SessionStatus, PosterStatus, CommentType, IntroMediaType } from '@prisma/client'
+import { PrismaClient, SessionStatus, PosterStatus, CommentType } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -16,87 +16,59 @@ async function main() {
             slug: 'summer-2026',
             status: SessionStatus.LIVE,
             startAt: new Date(),
-            endAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+            endAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         },
     })
 
-    console.log('Creating sample posters...')
-    const postersData = [
-        {
-            title: 'Community Engagement in Urban Health Initiatives',
-            scholarNames: ['Dr. Sarah Chen', 'James Wilson'],
-            institutions: ['University of Metro', 'Global Health Corp'],
-            tags: ['Health', 'Urban', 'Community'],
-            whyThisMatters: 'Urban health initiatives often fail due to lack of community trust. This work bridges that gap.',
-            summaryProblem: 'Low participation rates in urban screening programs.',
-            summaryAudience: 'City planners and public health officials.',
-            summaryMethods: 'Six-month ethnographic study in three neighborhoods.',
-            summaryFindings: 'Trust is built through local navigators rather than digital outreach.',
-            summaryChange: 'Future programs should allocate 40% of budget to community-led outreach.',
-            welcomeMessage: 'Hi! I am Sarah. I love talking about how people interact with city services. Ask me anything!',
-            feedbackPrompt: 'I would love feedback on how to scale the local navigator model.',
-        },
-        {
-            title: 'Sustainable Water Reclamation in Arid Climates',
-            scholarNames: ['Mateo Rodriguez'],
-            institutions: ['Desert Research Institute'],
-            tags: ['Sustainability', 'Water', 'Engineering'],
-            whyThisMatters: 'Water scarcity is the defining crisis of our century in arid zones.',
-            summaryProblem: 'Current reclamation systems lose 15% through evaporation.',
-            summaryAudience: 'Agricultural engineers and municipal water boards.',
-            summaryMethods: 'Pilot testing of a closed-loop subterranean filtration system.',
-            summaryFindings: 'Evaporation was reduced to 2% and water quality exceeded standards.',
-            summaryChange: 'This could save 200 million gallons annually in the Southwest.',
-            welcomeMessage: 'Welcome! This project is the result of three years of field work.',
-        },
-        // Adding more mock data to reach 10
-        ...Array.from({ length: 8 }).map((_, i) => ({
-            title: `Poster Title ${i + 3}: Exploring Topic ${String.fromCharCode(65 + i)}`,
-            scholarNames: [`Scholar ${i + 3}`],
-            institutions: [`Institution ${i + 3}`],
-            tags: ['Research', 'Science', 'Innovation'],
-            whyThisMatters: `Brief explanation of why research ${i + 3} is important.`,
-            summaryProblem: 'Description of the problem being solved.',
-            summaryAudience: 'Target stakeholders.',
-            summaryMethods: 'Overview of methodology used.',
-            summaryFindings: 'Key results and outcomes.',
-            summaryChange: 'Potential impact on the field.',
-        })),
+    const realPosters = [
+        { file: 'Allen Watts.pdf', scholar: 'Allen Watts', title: 'Healthcare Innovation in Rural Communities' },
+        { file: 'Andrabi.pdf', scholar: 'Andrabi', title: 'Molecular Markers in Diagnostic Imaging' },
+        { file: 'Caldwell.pdf', scholar: 'Caldwell', title: 'Sustainable Infrastructure Development' },
+        { file: 'Cardozo.pdf', scholar: 'Cardozo', title: 'Public Policy and Social Equity' },
+        { file: 'Clarkson.pdf', scholar: 'Clarkson', title: 'Advances in Pediatric Care' },
+        { file: 'Crockett.pdf', scholar: 'Crockett', title: 'Behavioral Economics and Financial Literacy' },
+        { file: 'Gazaway.pdf', scholar: 'Gazaway', title: 'Quantum Computing and Cryptography' },
+        { file: 'Gerke.pdf', scholar: 'Gerke', title: 'Machine Learning for Environmental Protection' },
+        { file: 'Ghazi.pdf', scholar: 'Ghazi', title: 'Renewable Energy Solutions for Developing Nations' },
+        { file: 'Gravett.pdf', scholar: 'Gravett', title: 'Artificial Intelligence in Legal Systems' },
+        { file: 'Karlson.pdf', scholar: 'Karlson', title: 'Urban Planning and Green Spaces' },
+        { file: 'Khodneva.pdf', scholar: 'Khodneva', title: 'Nanotechnology in Cancer Treatment' },
+        { file: 'Kinsey.pdf', scholar: 'Kinsey', title: 'Educational Technology for Inclusive Learning' },
+        { file: 'Lai.pdf', scholar: 'Lai', title: 'Cybersecurity Strategies for Modern Enterprises' },
+        { file: 'Myers.pdf', scholar: 'Myers', title: 'Neuroscience and Cognitive Development' },
+        { file: 'Worthington.pdf', scholar: 'Worthington', title: 'Space Exploration and Colonization Ethics' },
+        { file: 'Xie1.pdf', scholar: 'Xie', title: 'Big Data Analytics for Retail Optimization' },
+        { file: 'Xie2.pdf', scholar: 'Xie', title: 'Blockchain for Secure Supply Chain Management' },
     ]
 
-    for (const [index, p] of postersData.entries()) {
-        const poster = await prisma.poster.create({
+    console.log(`Seeding ${realPosters.length} real posters...`)
+
+    for (const [index, p] of realPosters.entries()) {
+        const slug = p.file.toLowerCase().replace(/\s+/g, '-').replace('.pdf', '')
+
+        await prisma.poster.create({
             data: {
-                ...p,
+                title: p.title,
+                scholarNames: [p.scholar],
+                institutions: ['FAC Scholars Program'],
+                tags: ['Research', 'Innovation', '2026'],
+                whyThisMatters: 'This research addresses a critical gap in our current understanding of the field, offering data-driven insights for future development.',
+                summaryProblem: 'Traditional models lack the flexibility required for modern dynamic environments.',
+                summaryAudience: 'Researchers, industry leaders, and policy makers.',
+                summaryMethods: 'A multi-disciplinary approach combining quantitative analysis with qualitative case studies.',
+                summaryFindings: 'Significant improvements in efficiency and accuracy compared to legacy systems.',
+                summaryChange: 'A shift towards more adaptive and decentralized frameworks.',
+                welcomeMessage: `Hi, I am ${p.scholar}. Welcome to my poster session!`,
+                feedbackPrompt: 'I am particularly interested in how this model can be applied in different geographical contexts.',
                 sessionId: session.id,
-                slug: `poster-${index + 1}`,
+                slug,
                 status: PosterStatus.PUBLISHED,
                 publishedAt: new Date(),
-                posterImageUrl: `https://picsum.photos/seed/poster${index}/1200/1800`,
-                posterPdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+                posterPdfUrl: `/uploads/${p.file}`,
+                // Using a high-quality vertical placeholder for the UI while the PDF is the main asset
+                posterImageUrl: `https://picsum.photos/seed/${slug}/1200/1800`,
                 posterImageWidth: 1200,
                 posterImageHeight: 1800,
-            },
-        })
-
-        // Create some comments
-        await prisma.comment.create({
-            data: {
-                posterId: poster.id,
-                type: CommentType.QUESTION,
-                authorName: 'Curious Researcher',
-                authorRole: 'Peer',
-                content: `Very interesting work! How did you handle the data validation in step ${index + 1}?`,
-            },
-        })
-
-        await prisma.comment.create({
-            data: {
-                posterId: poster.id,
-                type: CommentType.FEEDBACK,
-                authorName: 'Prof. Miller',
-                authorRole: 'Mentor',
-                content: 'Excellent presentation. The visual hierarchy is very clear.',
             },
         })
     }

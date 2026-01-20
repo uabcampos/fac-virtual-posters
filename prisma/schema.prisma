@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SessionStatus {
+  DRAFT
+  LIVE
+  ARCHIVED
+}
+
+enum PosterStatus {
+  DRAFT
+  PENDING
+  PUBLISHED
+  REJECTED
+}
+
+enum CommentType {
+  QUESTION
+  IDEA
+  FEEDBACK
+}
+
+enum IntroMediaType {
+  NONE
+  VIDEO
+  AUDIO
+}
+
+model Session {
+  id        String        @id @default(uuid())
+  slug      String        @unique
+  name      String
+  startAt   DateTime
+  endAt     DateTime?
+  status    SessionStatus @default(DRAFT)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  posters   Poster[]
+}
+
+model Poster {
+  id                String         @id @default(uuid())
+  sessionId         String
+  session           Session        @relation(fields: [sessionId], references: [id])
+  slug              String         @unique
+  title             String
+  scholarNames      String[]
+  institutions      String[]
+  tags              String[]
+  whyThisMatters    String         @db.Text
+  posterImageUrl    String
+  posterPdfUrl      String?
+  posterImageWidth  Int?
+  posterImageHeight Int?
+  summaryProblem    String         @db.Text
+  summaryAudience   String         @db.Text
+  summaryMethods    String         @db.Text
+  summaryFindings   String         @db.Text
+  summaryChange     String         @db.Text
+  welcomeMessage    String?        @db.Text
+  feedbackPrompt    String?        @db.Text
+  scholarPhotoUrl   String?
+  contactEmail      String?
+  showContactEmail  Boolean        @default(false)
+  introMediaUrl     String?
+  introMediaType    IntroMediaType @default(NONE)
+  status            PosterStatus   @default(DRAFT)
+  publishedAt       DateTime?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  comments          Comment[]
+  views             PosterView[]
+}
+
+model Comment {
+  id         String      @id @default(uuid())
+  posterId   String
+  poster     Poster      @relation(fields: [posterId], references: [id])
+  type       CommentType
+  authorName String?
+  authorRole String?
+  isAnonymous Boolean    @default(false)
+  content    String      @db.Text
+  parentId   String?
+  parent     Comment?    @relation("Thread", fields: [parentId], references: [id])
+  replies    Comment[]   @relation("Thread")
+  isHidden   Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model PosterView {
+  id         String   @id @default(uuid())
+  posterId   String
+  poster     Poster   @relation(fields: [posterId], references: [id])
+  viewerHash String
+  createdAt  DateTime @default(now())
+}

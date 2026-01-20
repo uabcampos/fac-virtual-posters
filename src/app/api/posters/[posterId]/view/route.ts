@@ -4,16 +4,16 @@ import { v4 as uuidv4 } from 'uuid'
 
 export async function POST(
     request: Request,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ posterId: string }> }
 ) {
     try {
-        const { id } = await params
+        const { posterId } = await params
 
         // Create a new view record
         // In a real app, we might want to de-duplicate views by IP or session
         await prisma.posterView.create({
             data: {
-                posterId: id,
+                posterId,
                 viewerHash: uuidv4() // In a real app, hash the IP
             }
         })

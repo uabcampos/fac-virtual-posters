@@ -4,10 +4,10 @@ import { PosterStatus } from '@prisma/client'
 
 export async function PATCH(
     request: Request,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ posterId: string }> }
 ) {
     try {
-        const { id } = await params
+        const { posterId } = await params
         const { status } = await request.json()
 
         if (!Object.values(PosterStatus).includes(status)) {
@@ -15,7 +15,7 @@ export async function PATCH(
         }
 
         const poster = await prisma.poster.update({
-            where: { id },
+            where: { id: posterId },
             data: {
                 status,
                 publishedAt: status === PosterStatus.PUBLISHED ? new Date() : undefined
@@ -31,11 +31,11 @@ export async function PATCH(
 
 export async function DELETE(
     request: Request,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ posterId: string }> }
 ) {
     try {
-        const { id } = await params
-        await prisma.poster.delete({ where: { id } })
+        const { posterId } = await params
+        await prisma.poster.delete({ where: { id: posterId } })
         return NextResponse.json({ success: true })
     } catch (error) {
         console.error('Delete error:', error)

@@ -3,15 +3,15 @@ import prisma from '@/lib/prisma'
 
 export async function DELETE(
     request: Request,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ commentId: string }> }
 ) {
     try {
-        const { id } = await params
+        const { commentId } = await params
 
         // We also need to delete any replies to this comment to avoid foreign key issues
         // Note: If we had an 'isDeleted' flag, we might use that instead.
         // For now, we delete the comment and its sub-tree.
-        await prisma.comment.delete({ where: { id } })
+        await prisma.comment.delete({ where: { id: commentId } })
 
         return NextResponse.json({ success: true })
     } catch (error) {

@@ -4,6 +4,7 @@ import { PosterCard } from '@/components/gallery/PosterCard'
 import { PosterFilters } from '@/components/gallery/PosterFilters'
 import { notFound } from 'next/navigation'
 import { SessionStatus, PosterStatus } from '@prisma/client'
+import { ArrowRight } from 'lucide-react'
 
 interface GalleryPageProps {
     params: Promise<{
@@ -87,6 +88,17 @@ export default async function GalleryPage({ params, searchParams }: GalleryPageP
                             Forge AHEAD Center
                         </h1>
                     </Link>
+
+                    <div className="flex items-center gap-4">
+                        <Link
+                            href={`/sessions/${sessionSlug}/hall`}
+                            className="flex items-center gap-2 rounded-full bg-white/10 hover:bg-white/20 px-4 py-2 text-sm font-bold text-white transition-all ring-1 ring-white/20 hover:ring-white/40 group"
+                        >
+                            <span className="hidden sm:inline">Explore the Hall</span>
+                            <span className="sm:hidden">Hall View</span>
+                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        </Link>
+                    </div>
                 </div>
             </header>
 

@@ -54,12 +54,12 @@ export function PosterViewer({ imageUrl, pdfUrl }: PosterViewerProps) {
             {/* Viewer */}
             <div
                 ref={viewerRef}
-                className="relative aspect-square w-full overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-800 shadow-2xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center"
+                className="relative aspect-square w-full overflow-hidden rounded-2xl bg-zinc-950 shadow-2xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center"
             >
                 {loading && (
-                    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-zinc-50/80 dark:bg-zinc-900/80 backdrop-blur-sm">
+                    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-zinc-950/80 backdrop-blur-sm">
                         <Loader2 className="h-8 w-8 animate-spin text-forge-teal mb-2" />
-                        <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Loading High-Res Poster...</p>
+                        <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Loading High-Res Poster...</p>
                     </div>
                 )}
 
@@ -85,7 +85,7 @@ export function PosterViewer({ imageUrl, pdfUrl }: PosterViewerProps) {
                                 wrapperStyle={{ width: '100%', height: '100%' }}
                                 contentStyle={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                             >
-                                <div className="flex items-center justify-center w-full h-full p-2">
+                                <div className="flex items-center justify-center w-full h-full p-0">
                                     {pdfUrl ? (
                                         <Document
                                             file={pdfUrl}
@@ -96,7 +96,7 @@ export function PosterViewer({ imageUrl, pdfUrl }: PosterViewerProps) {
                                             <Page
                                                 pageNumber={pageNumber}
                                                 renderMode={"svg" as any}
-                                                width={600} // Smaller base width to fit typical desktop containers, zoom handles the rest
+                                                width={800} // Increased for better default fill
                                                 className="shadow-xl"
                                                 loading={null}
                                             />

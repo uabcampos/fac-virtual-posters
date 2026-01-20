@@ -132,4 +132,5 @@ function ControlButton({
         >
             {icon}
         </button>
+    )
 }

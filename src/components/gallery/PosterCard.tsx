@@ -32,7 +32,7 @@ export function PosterCard({ sessionSlug, poster }: PosterCardProps) {
             className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800"
         >
             {/* Thumbnail */}
-            <div className="relative aspect-[2/3] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+            <div className="relative aspect-square w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
                 <Image
                     src={poster.posterImageUrl}
                     alt={poster.title}

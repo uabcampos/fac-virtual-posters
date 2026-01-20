@@ -3,13 +3,15 @@ import prisma from '@/lib/prisma'
 import { CommentType } from '@prisma/client'
 import { z } from 'zod'
 
+export const dynamic = 'force-dynamic'
+
 const createCommentSchema = z.object({
     type: z.nativeEnum(CommentType),
-    authorName: z.string().optional(),
-    authorRole: z.string().optional(),
+    authorName: z.string().nullable().optional(),
+    authorRole: z.string().nullable().optional(),
     isAnonymous: z.boolean().default(false),
     content: z.string().min(1).max(2000),
-    parentId: z.string().uuid().optional(),
+    parentId: z.string().uuid().nullable().optional(),
 })
 
 export async function GET(

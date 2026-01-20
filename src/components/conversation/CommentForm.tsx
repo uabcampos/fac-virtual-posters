@@ -55,9 +55,14 @@ export function CommentForm({
                 setContent('')
                 setAuthorName('')
                 onSuccess()
+            } else {
+                const errorData = await res.json()
+                console.error('Failed to submit comment:', errorData)
+                alert('Failed to submit comment. Please try again.')
             }
         } catch (error) {
             console.error('Error submitting comment:', error)
+            alert('An error occurred. Please check your connection.')
         } finally {
             setIsSubmitting(false)
         }

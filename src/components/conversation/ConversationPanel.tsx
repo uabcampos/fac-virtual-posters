@@ -13,6 +13,7 @@ interface Comment {
     authorRole: string | null
     isAnonymous: boolean
     content: string
+    likeCount?: number
     createdAt: string
     replies?: Comment[]
 }
@@ -109,6 +110,7 @@ export function ConversationPanel({ posterId, scholarName }: ConversationPanelPr
                         posterId={posterId}
                         scholarName={scholarName}
                         onReplySuccess={fetchComments}
+                        onLikeSuccess={fetchComments}
                     />
                 ) : (
                     <div className="py-12 text-center text-zinc-500">

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { CommentType } from '@prisma/client'
 import { CommentForm } from './CommentForm'
 import { formatDistanceToNow } from 'date-fns'
-import { User, MessageCircle } from 'lucide-react'
+import { User, MessageCircle, Heart } from 'lucide-react'
 
 interface Comment {
     id: string
@@ -13,6 +13,7 @@ interface Comment {
     authorRole: string | null
     isAnonymous: boolean
     content: string
+    likeCount?: number
     createdAt: string
     replies?: Comment[]
 }
@@ -22,9 +23,10 @@ interface CommentListProps {
     posterId: string
     scholarName: string
     onReplySuccess: () => void
+    onLikeSuccess?: () => void
 }
 
-export function CommentList({ comments, posterId, scholarName, onReplySuccess }: CommentListProps) {
+export function CommentList({ comments, posterId, scholarName, onReplySuccess, onLikeSuccess }: CommentListProps) {
     return (
         <div className="space-y-6">
             {comments.map((comment) => (
@@ -34,6 +36,7 @@ export function CommentList({ comments, posterId, scholarName, onReplySuccess }:
                     posterId={posterId}
                     scholarName={scholarName}
                     onReplySuccess={onReplySuccess}
+                    onLikeSuccess={onLikeSuccess}
                 />
             ))}
         </div>
@@ -45,15 +48,33 @@ function CommentItem({
     posterId,
     scholarName,
     onReplySuccess,
+    onLikeSuccess,
     isReply = false
 }: {
     comment: Comment;
     posterId: string;
     scholarName: string;
     onReplySuccess: () => void;
+    onLikeSuccess?: () => void;
     isReply?: boolean;
 }) {
     const [showReplyForm, setShowReplyForm] = useState(false)
+    const [isLiking, setIsLiking] = useState(false)
+
+    const handleLike = async () => {
+        if (isLiking) return
+        setIsLiking(true)
+        try {
+            const res = await fetch(`/api/comments/${comment.id}/like`, { method: 'POST' })
+            if (res.ok) {
+                onLikeSuccess?.()
+            }
+        } catch (error) {
+            console.error('Failed to like:', error)
+        } finally {
+            setIsLiking(false)
+        }
+    }
 
     // Robust scholar detection:
     // 1. Explicitly tagged with 'Scholar' role
@@ -119,8 +140,23 @@ function CommentItem({
                         {comment.content}
                     </div>
 
-                    {!isReply && (
-                        <div className="mt-3 flex items-center gap-4">
+                    <div className="mt-3 flex items-center gap-5">
+                        <button
+                            onClick={handleLike}
+                            disabled={isLiking}
+                            className={cn(
+                                "flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest transition-all",
+                                (comment.likeCount || 0) > 0
+                                    ? "text-rose-500 bg-rose-50 dark:bg-rose-900/20 px-2 py-0.5 rounded-full"
+                                    : "text-zinc-400 hover:text-rose-500"
+                            )}
+                        >
+                            <Heart className={cn("h-3.5 w-3.5", (comment.likeCount || 0) > 0 && "fill-current")} />
+                            {(comment.likeCount || 0) > 0 && <span>{comment.likeCount}</span>}
+                            <span>Like</span>
+                        </button>
+
+                        {!isReply && (
                             <button
                                 onClick={() => setShowReplyForm(!showReplyForm)}
                                 className="flex items-center gap-1.5 text-[11px] font-bold text-zinc-400 hover:text-blue-600 transition-colors uppercase tracking-widest"
@@ -128,8 +164,8 @@ function CommentItem({
                                 <MessageCircle className="h-3.5 w-3.5" />
                                 Reply
                             </button>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
 

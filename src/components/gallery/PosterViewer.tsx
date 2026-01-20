@@ -20,10 +20,21 @@ export function PosterViewer({ imageUrl, pdfUrl }: PosterViewerProps) {
     const [numPages, setNumPages] = useState<number | null>(null)
     const [pageNumber, setPageNumber] = useState(1)
     const [loading, setLoading] = useState(true)
+    const viewerRef = React.useRef<HTMLDivElement>(null)
 
     function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
         setNumPages(numPages)
         setLoading(false)
+    }
+
+    const handleFullscreen = () => {
+        if (viewerRef.current) {
+            if (document.fullscreenElement) {
+                document.exitFullscreen()
+            } else {
+                viewerRef.current.requestFullscreen()
+            }
+        }
     }
 
     return (
@@ -36,12 +47,15 @@ export function PosterViewer({ imageUrl, pdfUrl }: PosterViewerProps) {
                     <ControlButton icon={<RotateCcw className="h-4 w-4" />} label="Reset" onClick={() => { }} />
                 </div>
                 <div className="flex bg-black/50 backdrop-blur-md rounded-lg p-1 border border-white/10">
-                    <ControlButton icon={<Maximize className="h-4 w-4" />} label="Fullscreen" onClick={() => { }} />
+                    <ControlButton icon={<Maximize className="h-4 w-4" />} label="Fullscreen" onClick={handleFullscreen} />
                 </div>
             </div>
 
             {/* Viewer */}
-            <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-800 shadow-2xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
+            <div
+                ref={viewerRef}
+                className="relative aspect-square w-full overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-800 shadow-2xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center"
+            >
                 {loading && (
                     <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-zinc-50/80 dark:bg-zinc-900/80 backdrop-blur-sm">
                         <Loader2 className="h-8 w-8 animate-spin text-forge-teal mb-2" />

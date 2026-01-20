@@ -7,6 +7,7 @@ import { CommentType } from '@prisma/client'
 interface CommentFormProps {
     posterId: string
     type: CommentType
+    scholarName: string
     parentId?: string
     placeholder: string
     buttonLabel: string
@@ -17,6 +18,7 @@ interface CommentFormProps {
 export function CommentForm({
     posterId,
     type,
+    scholarName,
     parentId,
     placeholder,
     buttonLabel,
@@ -26,6 +28,7 @@ export function CommentForm({
     const [content, setContent] = useState('')
     const [authorName, setAuthorName] = useState('')
     const [isAnonymous, setIsAnonymous] = useState(false)
+    const [isScholarMode, setIsScholarMode] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -41,8 +44,9 @@ export function CommentForm({
                 body: JSON.stringify({
                     type,
                     content,
-                    authorName: isAnonymous ? null : authorName || 'Anonymous',
-                    isAnonymous,
+                    authorName: isScholarMode ? scholarName : (isAnonymous ? null : authorName || 'Anonymous'),
+                    authorRole: isScholarMode ? 'Scholar' : null,
+                    isAnonymous: isScholarMode ? false : isAnonymous,
                     parentId
                 }),
             })
@@ -73,7 +77,7 @@ export function CommentForm({
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-4">
-                    {!isAnonymous && (
+                    {!isAnonymous && !isScholarMode && (
                         <div className="relative">
                             <User className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400" />
                             <input
@@ -86,18 +90,37 @@ export function CommentForm({
                         </div>
                     )}
 
+                    {!isScholarMode && (
+                        <button
+                            type="button"
+                            onClick={() => setIsAnonymous(!isAnonymous)}
+                            className={cn(
+                                "flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold transition-all",
+                                isAnonymous
+                                    ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+                                    : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                            )}
+                        >
+                            {isAnonymous ? <UserCheck className="h-3.5 w-3.5" /> : <User className="h-3.5 w-3.5" />}
+                            {isAnonymous ? "Posting Anonymously" : "Post Anonymously"}
+                        </button>
+                    )}
+
                     <button
                         type="button"
-                        onClick={() => setIsAnonymous(!isAnonymous)}
+                        onClick={() => {
+                            setIsScholarMode(!isScholarMode)
+                            if (!isScholarMode) setIsAnonymous(false)
+                        }}
                         className={cn(
                             "flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold transition-all",
-                            isAnonymous
-                                ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                                : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                            isScholarMode
+                                ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
+                                : "text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                         )}
                     >
-                        {isAnonymous ? <UserCheck className="h-3.5 w-3.5" /> : <User className="h-3.5 w-3.5" />}
-                        {isAnonymous ? "Posting Anonymously" : "Post Anonymously"}
+                        <UserCheck className="h-3.5 w-3.5" />
+                        {isScholarMode ? "Scholar Mode ON" : "Are you the Scholar?"}
                     </button>
                 </div>
 

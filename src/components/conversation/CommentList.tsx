@@ -55,52 +55,67 @@ function CommentItem({
 }) {
     const [showReplyForm, setShowReplyForm] = useState(false)
 
-    const isScholar = comment.authorName === scholarName || comment.authorRole === 'Scholar'
-
     return (
-        <div className={cn("group flex flex-col gap-3", isReply ? "ml-8 mt-4" : "")}>
-            <div className="flex items-start gap-3">
+        <div className={cn(
+            "group flex flex-col gap-3 transition-all duration-300",
+            isReply ? "ml-8 mt-4" : "",
+            isScholar && "relative"
+        )}>
+            {isScholar && (
+                <div className="absolute -inset-y-2 -inset-x-3 bg-blue-50/50 dark:bg-blue-900/10 rounded-3xl -z-10 ring-1 ring-blue-100 dark:ring-blue-900/30" />
+            )}
+
+            <div className="flex items-start gap-4">
                 {/* Avatar */}
                 <div className={cn(
-                    "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold",
+                    "flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl text-sm font-black shadow-sm transition-transform group-hover:scale-105",
                     isScholar
-                        ? "bg-blue-600 text-white"
-                        : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
+                        ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white ring-2 ring-white dark:ring-zinc-900"
+                        : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700"
                 )}>
-                    {isScholar ? scholarName[0] : (comment.authorName?.[0] || 'A')}
+                    {isScholar ? scholarSymbol : (comment.authorName?.[0] || 'A')}
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                        <span className={cn(
-                            "text-xs font-bold truncate",
-                            isScholar ? "text-blue-600 dark:text-blue-400" : "text-zinc-900 dark:text-zinc-100"
-                        )}>
-                            {isScholar ? scholarName : (comment.authorName || 'Anonymous')}
-                        </span>
-                        {isScholar && (
-                            <span className="inline-flex items-center rounded-md bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400">
-                                Scholar
+                    <div className="flex items-center justify-between mb-1.5">
+                        <div className="flex items-center gap-2">
+                            <span className={cn(
+                                "text-sm font-extrabold truncate",
+                                isScholar ? "text-blue-700 dark:text-blue-400" : "text-zinc-900 dark:text-zinc-100"
+                            )}>
+                                {isScholar ? scholarName : (comment.authorName || 'Anonymous')}
                             </span>
-                        )}
-                        <span className="text-[10px] text-zinc-400">
+                            {isScholar && (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-blue-600 px-2.5 py-0.5 text-[10px] font-black text-white shadow-sm uppercase tracking-wider">
+                                    Scholar Answer
+                                </span>
+                            )}
+                        </div>
+                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest whitespace-nowrap">
                             {formatDistanceToNow(new Date(comment.createdAt))} ago
                         </span>
                     </div>
 
-                    <div className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed break-words">
+                    <div className={cn(
+                        "text-sm leading-relaxed break-words",
+                        isScholar
+                            ? "text-zinc-900 dark:text-zinc-100 font-semibold italic"
+                            : "text-zinc-700 dark:text-zinc-300"
+                    )}>
                         {comment.content}
                     </div>
 
                     {!isReply && (
-                        <button
-                            onClick={() => setShowReplyForm(!showReplyForm)}
-                            className="mt-2 flex items-center gap-1.5 text-[11px] font-bold text-zinc-400 hover:text-blue-600 transition-colors"
-                        >
-                            <MessageCircle className="h-3 w-3" />
-                            Reply
-                        </button>
+                        <div className="mt-3 flex items-center gap-4">
+                            <button
+                                onClick={() => setShowReplyForm(!showReplyForm)}
+                                className="flex items-center gap-1.5 text-[11px] font-bold text-zinc-400 hover:text-blue-600 transition-colors uppercase tracking-widest"
+                            >
+                                <MessageCircle className="h-3.5 w-3.5" />
+                                Reply
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>

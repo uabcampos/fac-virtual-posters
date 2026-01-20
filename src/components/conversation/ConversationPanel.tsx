@@ -81,6 +81,7 @@ export function ConversationPanel({ posterId, scholarName }: ConversationPanelPr
                 <CommentForm
                     posterId={posterId}
                     type={activeTab}
+                    scholarName={scholarName}
                     onSuccess={fetchComments}
                     placeholder={
                         activeTab === CommentType.QUESTION ? "Ask a question..." :

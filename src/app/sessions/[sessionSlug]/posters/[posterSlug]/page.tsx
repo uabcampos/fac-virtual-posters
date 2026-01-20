@@ -6,6 +6,9 @@ import { PosterViewer } from '@/components/gallery/PosterViewer'
 import { ConversationPanel } from '@/components/conversation/ConversationPanel'
 import { PosterViewTracker } from '@/components/gallery/PosterViewTracker'
 import { PosterStatus } from '@prisma/client'
+import { AudioPlayer } from '@/components/poster/AudioPlayer'
+import { ResourceList } from '@/components/poster/ResourceList'
+import { QRCodeModal } from '@/components/poster/QRCodeModal'
 
 interface PosterDetailPageProps {
     params: Promise<{
@@ -21,6 +24,7 @@ export default async function PosterDetailPage({ params }: PosterDetailPageProps
         where: { slug: posterSlug },
         include: {
             session: true,
+            resources: true,
             _count: {
                 select: { comments: true },
             },
@@ -146,6 +150,21 @@ export default async function PosterDetailPage({ params }: PosterDetailPageProps
                                         Scholar
                                     </span>
                                 </div>
+                                <div className="ml-auto">
+                                    <QRCodeModal
+                                        url={`/sessions/${sessionSlug}/posters/${posterSlug}`}
+                                        title={poster.title}
+                                        posterNumber={currentIndex + 1}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Audio Guide */}
+                            <div className="mb-6">
+                                <AudioPlayer
+                                    textToSpeak={`Here is a summary of the research titled ${poster.title}. The problem: ${poster.summaryProblem}. Why this matters: ${poster.whyThisMatters}. key findings: ${poster.summaryFindings}.`}
+                                    scholarName={poster.scholarNames[0]}
+                                />
                             </div>
 
                             {poster.welcomeMessage && (
@@ -164,13 +183,16 @@ export default async function PosterDetailPage({ params }: PosterDetailPageProps
                             )}
 
                             {poster.feedbackPrompt && (
-                                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-900/30 p-4 rounded-2xl">
+                                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-900/30 p-4 rounded-2xl mb-6">
                                     <h4 className="text-xs font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider mb-2">What I'd love feedback on</h4>
                                     <p className="text-sm text-amber-900 dark:text-amber-300 font-medium">
                                         {poster.feedbackPrompt}
                                     </p>
                                 </div>
                             )}
+
+                            {/* Deep Dive Resources */}
+                            <ResourceList resources={poster.resources} />
                         </div>
 
                         {/* Compact 5-Minute Summary */}

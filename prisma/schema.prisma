@@ -74,12 +74,33 @@ model Poster {
   showContactEmail  Boolean        @default(false)
   introMediaUrl     String?
   introMediaType    IntroMediaType @default(NONE)
+  audioGuideUrl     String?
+  qrCodeUrl         String?
+  resources         Resource[]
   status            PosterStatus   @default(DRAFT)
   publishedAt       DateTime?
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
   comments          Comment[]
   views             PosterView[]
+}
+
+enum ResourceType {
+  LINK
+  PDF
+  VIDEO
+  DATASET
+}
+
+model Resource {
+  id        String       @id @default(uuid())
+  posterId  String
+  poster    Poster       @relation(fields: [posterId], references: [id])
+  label     String
+  url       String
+  type      ResourceType
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 }
 
 model Comment {

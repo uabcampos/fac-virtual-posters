@@ -25,7 +25,7 @@ export function PosterViewer({ imageUrl, pdfUrl }: PosterViewerProps) {
             </div>
 
             {/* Viewer */}
-            <div className="relative aspect-[2/3] w-full overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-800 shadow-2xl border border-zinc-200 dark:border-zinc-800">
+            <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-800 shadow-2xl border border-zinc-200 dark:border-zinc-800">
                 <TransformWrapper
                     initialScale={1}
                     minScale={0.5}

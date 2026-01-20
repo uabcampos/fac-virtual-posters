@@ -23,17 +23,17 @@ export function PosterBoard({ poster, sessionSlug, index }: PosterBoardProps) {
                 href={`/sessions/${sessionSlug}/posters/${poster.slug}`}
                 className="group relative block"
             >
-                {/* Poster Board Frame */}
-                <div className="relative w-[320px] h-[480px] bg-white dark:bg-zinc-900 rounded-lg shadow-xl ring-1 ring-zinc-200 dark:ring-zinc-800 overflow-hidden transition-all duration-300 group-hover:scale-[1.03] group-hover:shadow-2xl group-hover:ring-blue-500/50">
-                    {/* Poster Image */}
-                    <div className="absolute inset-4 flex items-center justify-center bg-zinc-50 dark:bg-zinc-800/50 rounded pointer-events-none">
+                {/* Square Poster Board Frame */}
+                <div className="relative w-[380px] h-[380px] bg-white dark:bg-zinc-900 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] ring-1 ring-zinc-200 dark:ring-zinc-800 overflow-hidden transition-all duration-300 group-hover:scale-[1.05] group-hover:shadow-[0_30px_60px_rgba(0,0,0,0.4)] group-hover:ring-blue-500/50">
+                    {/* Poster Image - Centered and Sharp */}
+                    <div className="absolute inset-6 flex items-center justify-center bg-zinc-50 dark:bg-zinc-800/50 rounded-lg overflow-hidden pointer-events-none">
                         {poster.posterImageUrl ? (
                             <Image
                                 src={poster.posterImageUrl}
                                 alt={poster.title}
                                 fill
-                                className="object-contain p-2 blur-[1px] group-hover:blur-0 transition-all duration-500"
-                                sizes="320px"
+                                className="object-cover transition-all duration-700 group-hover:scale-110"
+                                sizes="380px"
                                 priority={index < 4}
                             />
                         ) : (
@@ -50,18 +50,18 @@ export function PosterBoard({ poster, sessionSlug, index }: PosterBoardProps) {
                     <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_40px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_0_40px_rgba(0,0,0,0.2)]" />
                 </div>
 
-                {/* Label Strip */}
-                <div className="mt-6 text-center space-y-1">
+                {/* Label Strip - High Design Typography */}
+                <div className="mt-8 text-center space-y-2">
                     <div className="inline-flex items-center gap-2">
-                        <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full ring-1 ring-blue-100 dark:ring-blue-800/50 group-hover:bg-blue-600 group-hover:text-white group-hover:ring-blue-600 transition-colors">
-                            Poster #{index + 1}
+                        <span className="text-[10px] font-black text-blue-400 dark:text-blue-500 uppercase tracking-[0.3em] bg-blue-900/20 px-3 py-1 rounded-full ring-1 ring-blue-500/30 group-hover:bg-blue-600 group-hover:text-white group-hover:ring-blue-600 transition-all">
+                            Poster No. {index + 1}
                         </span>
                     </div>
-                    <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 line-clamp-1 px-4 group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-base font-black text-white line-clamp-1 px-6 tracking-tight group-hover:text-blue-400 transition-colors">
                         {poster.title}
                     </h3>
-                    <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                        {poster.scholarNames?.[0] || 'Unknown Scholar'}
+                    <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-[0.2em]">
+                        {poster.scholarNames?.[0] || 'Researcher'}
                     </p>
                 </div>
             </Link>

@@ -55,8 +55,18 @@ function CommentItem({
 }) {
     const [showReplyForm, setShowReplyForm] = useState(false)
 
-    const isScholar = comment.authorName === scholarName || comment.authorRole === 'Scholar'
-    const scholarSymbol = scholarName ? scholarName[0] : 'S'
+    // Robust scholar detection:
+    // 1. Explicitly tagged with 'Scholar' role
+    // 2. Name matches the scholar's name (case-insensitive and trimmed)
+    const isScholar =
+        comment.authorRole === 'Scholar' ||
+        (scholarName && comment.authorName?.toLowerCase().trim() === scholarName.toLowerCase().trim())
+
+    const scholarDisplayName = comment.authorRole === 'Scholar' && comment.authorName
+        ? comment.authorName
+        : scholarName
+
+    const scholarSymbol = scholarDisplayName ? scholarDisplayName[0] : 'S'
 
     return (
         <div className={cn(
@@ -87,7 +97,7 @@ function CommentItem({
                                 "text-sm font-extrabold truncate",
                                 isScholar ? "text-blue-700 dark:text-blue-400" : "text-zinc-900 dark:text-zinc-100"
                             )}>
-                                {isScholar ? scholarName : (comment.authorName || 'Anonymous')}
+                                {isScholar ? scholarDisplayName : (comment.authorName || 'Anonymous')}
                             </span>
                             {isScholar && (
                                 <span className="inline-flex items-center gap-1 rounded-full bg-blue-600 px-2.5 py-0.5 text-[10px] font-black text-white shadow-sm uppercase tracking-wider">

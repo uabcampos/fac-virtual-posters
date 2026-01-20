@@ -50,11 +50,11 @@ export function PosterViewer({ imageUrl, pdfUrl }: PosterViewerProps) {
                 )}
 
                 <TransformWrapper
-                    initialScale={0.6} // Start slightly zoomed out to see more
-                    minScale={0.4}
+                    initialScale={1}
+                    minScale={0.5}
                     maxScale={5}
                     centerOnInit
-                    limitToBounds={false}
+                    limitToBounds={true}
                 >
                     {({ zoomIn, zoomOut, resetTransform }) => (
                         <>
@@ -69,21 +69,21 @@ export function PosterViewer({ imageUrl, pdfUrl }: PosterViewerProps) {
 
                             <TransformComponent
                                 wrapperStyle={{ width: '100%', height: '100%' }}
-                                contentStyle={{ width: '100%', height: '100%' }}
+                                contentStyle={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                             >
-                                <div className="flex items-center justify-center p-4">
+                                <div className="flex items-center justify-center w-full h-full p-2">
                                     {pdfUrl ? (
                                         <Document
                                             file={pdfUrl}
                                             onLoadSuccess={onDocumentLoadSuccess}
                                             loading={null}
-                                            className="shadow-2xl"
+                                            className="shadow-2xl flex items-center justify-center"
                                         >
                                             <Page
                                                 pageNumber={pageNumber}
                                                 renderMode={"svg" as any}
-                                                width={1200} // High res for zooming
-                                                className="max-w-none h-auto"
+                                                width={600} // Smaller base width to fit typical desktop containers, zoom handles the rest
+                                                className="shadow-xl"
                                                 loading={null}
                                             />
                                         </Document>

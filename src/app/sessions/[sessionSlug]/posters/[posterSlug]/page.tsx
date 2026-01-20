@@ -162,7 +162,7 @@ export default async function PosterDetailPage({ params }: PosterDetailPageProps
                             {/* Audio Guide */}
                             <div className="mb-6">
                                 <AudioPlayer
-                                    textToSpeak={`Here is a summary of the research titled ${poster.title}. The problem: ${poster.summaryProblem}. Why this matters: ${poster.whyThisMatters}. key findings: ${poster.summaryFindings}.`}
+                                    audioUrl={poster.audioGuideUrl}
                                     scholarName={poster.scholarNames[0]}
                                 />
                             </div>

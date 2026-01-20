@@ -4,74 +4,50 @@ import { useState, useEffect, useRef } from 'react'
 import { Play, Pause, Volume2 } from 'lucide-react'
 
 interface AudioPlayerProps {
-    textToSpeak: string
+    audioUrl?: string | null
     scholarName?: string
 }
 
-export function AudioPlayer({ textToSpeak, scholarName }: AudioPlayerProps) {
+export function AudioPlayer({ audioUrl, scholarName }: AudioPlayerProps) {
     const [isPlaying, setIsPlaying] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const [audioUrl, setAudioUrl] = useState<string | null>(null)
     const audioRef = useRef<HTMLAudioElement | null>(null)
 
     useEffect(() => {
-        // Cleanup audio URL on unmount
+        if (!audioUrl) return
+
+        if (!audioRef.current) {
+            audioRef.current = new Audio(audioUrl)
+            audioRef.current.onended = () => setIsPlaying(false)
+            audioRef.current.onpause = () => setIsPlaying(false)
+            audioRef.current.onplay = () => setIsPlaying(true)
+        } else {
+            audioRef.current.src = audioUrl
+        }
+
         return () => {
-            if (audioUrl) URL.revokeObjectURL(audioUrl)
+            if (audioRef.current) {
+                audioRef.current.pause()
+            }
         }
     }, [audioUrl])
 
     const handlePlay = async () => {
+        if (!audioUrl || !audioRef.current) return
+
         if (isPlaying && audioRef.current) {
             audioRef.current.pause()
             setIsPlaying(false)
             return
         }
 
-        if (audioUrl && audioRef.current) {
-            audioRef.current.play()
-            setIsPlaying(true)
-            return
-        }
-
-        // Fetch and play
         setIsLoading(true)
         try {
-            const response = await fetch('/api/audio/speech', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: textToSpeak }),
-            })
-
-            if (!response.ok) throw new Error('Failed to generate audio')
-
-            const data = await response.json()
-            const binaryString = window.atob(data.audioContent)
-            const bytes = new Uint8Array(binaryString.length)
-            for (let i = 0; i < binaryString.length; i++) {
-                bytes[i] = binaryString.charCodeAt(i)
-            }
-            const blob = new Blob([bytes], { type: 'audio/mp3' })
-            const url = URL.createObjectURL(blob)
-
-            setAudioUrl(url)
-
-            // Create audio element if needed
-            if (!audioRef.current) {
-                audioRef.current = new Audio(url)
-                audioRef.current.onended = () => setIsPlaying(false)
-                audioRef.current.onpause = () => setIsPlaying(false)
-                audioRef.current.onplay = () => setIsPlaying(true)
-            } else {
-                audioRef.current.src = url
-            }
-
-            audioRef.current.play()
+            await audioRef.current.play()
             setIsPlaying(true)
-
         } catch (error) {
             console.error('TTS Error:', error)
-            alert('Unable to play audio summary at this time.')
+            alert('Unable to play the audio guide at this time.')
         } finally {
             setIsLoading(false)
         }
@@ -82,8 +58,8 @@ export function AudioPlayer({ textToSpeak, scholarName }: AudioPlayerProps) {
             <div className="flex items-center gap-4">
                 <button
                     onClick={handlePlay}
-                    disabled={isLoading}
-                    className={`flex items-center justify-center h-12 w-12 rounded-full text-white transition-all shadow-md flex-shrink-0 ${isLoading ? 'bg-zinc-400 cursor-wait' : 'bg-blue-600 hover:bg-blue-700'
+                    disabled={isLoading || !audioUrl}
+                    className={`flex items-center justify-center h-12 w-12 rounded-full text-white transition-all shadow-md flex-shrink-0 ${isLoading || !audioUrl ? 'bg-zinc-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
                         }`}
                 >
                     {isLoading ? (
@@ -98,10 +74,10 @@ export function AudioPlayer({ textToSpeak, scholarName }: AudioPlayerProps) {
                 <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between">
                         <span className="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">
-                            Scholar Voice AI
+                            Scholar Audio Guide
                         </span>
                         <span className="text-[10px] font-medium text-zinc-400">
-                            {isLoading ? 'Generating Audio...' : isPlaying ? 'Playing...' : 'Journey Neural Voice'}
+                            {audioUrl ? (isLoading ? 'Loading Audio...' : isPlaying ? 'Playing...' : 'Ready') : 'Audio Coming Soon'}
                         </span>
                     </div>
 
@@ -113,7 +89,9 @@ export function AudioPlayer({ textToSpeak, scholarName }: AudioPlayerProps) {
                     </div>
 
                     <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1">
-                        Narrating takeaways from {scholarName || 'the researcher'}...
+                        {audioUrl
+                            ? `Narrating takeaways from ${scholarName || 'the researcher'}...`
+                            : 'Audio guide is not available yet.'}
                     </p>
                 </div>
 

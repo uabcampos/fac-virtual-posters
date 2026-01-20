@@ -55,6 +55,9 @@ function CommentItem({
 }) {
     const [showReplyForm, setShowReplyForm] = useState(false)
 
+    const isScholar = comment.authorName === scholarName || comment.authorRole === 'Scholar'
+    const scholarSymbol = scholarName ? scholarName[0] : 'S'
+
     return (
         <div className={cn(
             "group flex flex-col gap-3 transition-all duration-300",
@@ -125,6 +128,7 @@ function CommentItem({
                     <CommentForm
                         posterId={posterId}
                         type={comment.type}
+                        scholarName={scholarName}
                         parentId={comment.id}
                         placeholder={`Reply to ${comment.authorName || 'Anonymous'}...`}
                         buttonLabel="Post Reply"

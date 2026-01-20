@@ -154,6 +154,15 @@ export default async function PosterDetailPage({ params }: PosterDetailPageProps
                                 </p>
                             )}
 
+                            {poster.scholarBio && (
+                                <div className="mb-6">
+                                    <h4 className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-2">About the Scholar</h4>
+                                    <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+                                        {poster.scholarBio}
+                                    </p>
+                                </div>
+                            )}
+
                             {poster.feedbackPrompt && (
                                 <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-900/30 p-4 rounded-2xl">
                                     <h4 className="text-xs font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider mb-2">What I'd love feedback on</h4>

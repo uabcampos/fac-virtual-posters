@@ -67,6 +67,7 @@ model Poster {
   summaryFindings   String         @db.Text
   summaryChange     String         @db.Text
   welcomeMessage    String?        @db.Text
+  scholarBio        String?        @db.Text
   feedbackPrompt    String?        @db.Text
   scholarPhotoUrl   String?
   contactEmail      String?

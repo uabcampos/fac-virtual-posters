@@ -137,7 +137,7 @@ function TabButton({
             className={cn(
                 "flex flex-1 items-center justify-center gap-2 rounded-xl py-2.5 text-xs font-bold transition-all",
                 active
-                    ? "bg-white text-blue-600 shadow-sm dark:bg-zinc-900 dark:text-blue-400"
+                    ? "bg-white text-brand-blue shadow-sm dark:bg-zinc-900 dark:text-blue-400"
                     : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
             )}
         >

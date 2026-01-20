@@ -61,7 +61,7 @@ export function PosterFilters({ tags }: PosterFiltersProps) {
                         placeholder="Search by title, scholar, or institution..."
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        className="w-full rounded-xl border border-zinc-200 bg-white py-2.5 pl-10 pr-4 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
+                        className="w-full rounded-xl border border-zinc-200 bg-white py-2.5 pl-10 pr-4 text-sm outline-none focus:border-forge-teal focus:ring-1 focus:ring-forge-teal dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
                     />
                 </form>
 
@@ -71,7 +71,7 @@ export function PosterFilters({ tags }: PosterFiltersProps) {
                     <select
                         defaultValue={searchParams.get('sort') || 'recently_active'}
                         onChange={handleSortChange}
-                        className="rounded-xl border border-zinc-200 bg-white py-2 px-3 text-sm outline-none focus:border-blue-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
+                        className="rounded-xl border border-zinc-200 bg-white py-2 px-3 text-sm outline-none focus:border-forge-teal dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
                     >
                         <option value="recently_active">Recently Active</option>
                         <option value="most_commented">Most Commented</option>
@@ -89,7 +89,7 @@ export function PosterFilters({ tags }: PosterFiltersProps) {
                         className={cn(
                             "rounded-full px-4 py-1.5 text-xs font-semibold transition-all",
                             searchParams.get('tag') === tag
-                                ? "bg-blue-600 text-white"
+                                ? "bg-brand-blue text-white shadow-md shadow-brand-blue/20"
                                 : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
                         )}
                     >
@@ -98,7 +98,7 @@ export function PosterFilters({ tags }: PosterFiltersProps) {
                 ))}
             </div>
 
-            {isPending && <div className="h-0.5 w-full animate-pulse bg-blue-500" />}
+            {isPending && <div className="h-0.5 w-full animate-pulse bg-brand-blue" />}
         </div>
     )
 }

@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
 @theme inline {
+  --color-forge-teal: #005B7F;
+  --color-forge-blue: #006280;
+  --color-brand-blue: #1d4ed8;
   --color-brand-50: #f0f9ff;
   --color-brand-100: #e0f2fe;
   --color-brand-200: #bae6fd;
@@ -11,7 +14,7 @@
   --color-brand-700: #0369a1;
   --color-brand-800: #075985;
   --color-brand-900: #0c4a6e;
-  
+
   --color-accent-600: #7c3aed;
   --color-accent-700: #6d28d9;
 }

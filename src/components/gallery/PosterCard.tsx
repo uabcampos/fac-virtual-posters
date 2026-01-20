@@ -59,7 +59,7 @@ export function PosterCard({ sessionSlug, poster }: PosterCardProps) {
                     ))}
                 </div>
 
-                <h3 className="mb-1 line-clamp-2 text-lg font-bold leading-tight text-zinc-900 group-hover:text-blue-600 dark:text-zinc-100 dark:group-hover:text-blue-400">
+                <h3 className="mb-1 line-clamp-2 text-lg font-bold leading-tight text-zinc-900 group-hover:text-forge-teal dark:text-zinc-100 dark:group-hover:text-brand-blue">
                     {poster.title}
                 </h3>
 
@@ -75,7 +75,7 @@ export function PosterCard({ sessionSlug, poster }: PosterCardProps) {
                     <span className="text-xs font-medium text-zinc-400 dark:text-zinc-600">
                         {poster.institutions[0]}
                     </span>
-                    <span className="text-xs font-bold text-blue-600 opacity-0 transition-opacity group-hover:opacity-100 dark:text-blue-400">
+                    <span className="text-xs font-bold text-forge-teal opacity-0 transition-opacity group-hover:opacity-100 dark:text-brand-blue">
                         View Poster →
                     </span>
                 </div>

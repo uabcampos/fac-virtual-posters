@@ -99,6 +99,8 @@ export function PosterViewer({ imageUrl, pdfUrl }: PosterViewerProps) {
                                                 width={800} // Increased for better default fill
                                                 className="shadow-xl"
                                                 loading={null}
+                                                renderTextLayer={false}
+                                                renderAnnotationLayer={false}
                                             />
                                         </Document>
                                     ) : (

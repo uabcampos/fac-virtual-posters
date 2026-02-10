@@ -6,6 +6,8 @@ import { notFound } from 'next/navigation'
 import { SessionStatus, PosterStatus } from '@prisma/client'
 import { ArrowRight } from 'lucide-react'
 
+export const runtime = 'nodejs'
+
 interface GalleryPageProps {
     params: Promise<{
         sessionSlug: string
@@ -17,120 +19,150 @@ interface GalleryPageProps {
     }>
 }
 
+function ErrorState({ title, message }: { title: string; message: string }) {
+    return (
+        <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans flex items-center justify-center px-6">
+            <div className="max-w-xl text-center">
+                <h1 className="text-2xl font-black text-zinc-900 dark:text-zinc-100">{title}</h1>
+                <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">{message}</p>
+            </div>
+        </div>
+    )
+}
+
 export default async function GalleryPage({ params, searchParams }: GalleryPageProps) {
     const { sessionSlug } = await params
     const { q, tag, sort } = await searchParams
 
-    const session = await prisma.session.findUnique({
-        where: { slug: sessionSlug },
-        include: {
-            posters: {
-                select: { tags: true },
-                where: { status: PosterStatus.PUBLISHED }
-            }
-        },
-    })
-
-    if (!session || session.status === SessionStatus.DRAFT) {
-        return notFound()
+    if (!process.env.DATABASE_URL) {
+        return (
+            <ErrorState
+                title="Gallery unavailable"
+                message="The database connection is not configured for this deployment."
+            />
+        )
     }
 
-    // Extract unique tags for filtering
-    const allTags = Array.from(new Set(session.posters.flatMap(p => p.tags))).sort()
-
-    // Fetch posters for this session
-    const where: any = {
-        sessionId: session.id,
-        status: PosterStatus.PUBLISHED,
-    }
-
-    if (q) {
-        where.OR = [
-            { title: { contains: q, mode: 'insensitive' } },
-            { scholarNames: { hasSome: [q] } },
-            { institutions: { hasSome: [q] } },
-        ]
-    }
-
-    if (tag) {
-        where.tags = { has: tag }
-    }
-
-    let orderBy: any = {}
-    if (sort === 'most_commented') {
-        orderBy = { comments: { _count: 'desc' } }
-    } else if (sort === 'az') {
-        orderBy = { title: 'asc' }
-    } else {
-        orderBy = { publishedAt: 'desc' }
-    }
-
-    const posters = await prisma.poster.findMany({
-        where,
-        orderBy,
-        include: {
-            _count: {
-                select: { comments: true },
+    try {
+        const session = await prisma.session.findUnique({
+            where: { slug: sessionSlug },
+            include: {
+                posters: {
+                    select: { tags: true },
+                    where: { status: PosterStatus.PUBLISHED }
+                }
             },
-        },
-    })
+        })
 
-    return (
-        <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">
-            {/* Header Branding */}
-            <header className="bg-forge-teal px-6 py-4 shadow-md">
-                <div className="mx-auto flex max-w-7xl items-center justify-between">
-                    <Link href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-white/20">
-                            <span className="text-xl font-black text-forge-teal">F</span>
-                        </div>
-                        <h1 className="text-lg font-bold tracking-tight text-white sm:text-xl">
-                            Forge AHEAD Center
-                        </h1>
-                    </Link>
+        if (!session || session.status === SessionStatus.DRAFT) {
+            return notFound()
+        }
 
-                    <div className="flex items-center gap-4">
-                        <Link
-                            href={`/sessions/${sessionSlug}/hall`}
-                            className="flex items-center gap-2 rounded-full bg-white/10 hover:bg-white/20 px-4 py-2 text-sm font-bold text-white transition-all ring-1 ring-white/20 hover:ring-white/40 group"
-                        >
-                            <span className="hidden sm:inline">Explore the Hall</span>
-                            <span className="sm:hidden">Hall View</span>
-                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+        // Extract unique tags for filtering
+        const allTags = Array.from(new Set(session.posters.flatMap(p => p.tags))).sort()
+
+        // Fetch posters for this session
+        const where: any = {
+            sessionId: session.id,
+            status: PosterStatus.PUBLISHED,
+        }
+
+        if (q) {
+            where.OR = [
+                { title: { contains: q, mode: 'insensitive' } },
+                { scholarNames: { hasSome: [q] } },
+                { institutions: { hasSome: [q] } },
+            ]
+        }
+
+        if (tag) {
+            where.tags = { has: tag }
+        }
+
+        let orderBy: any = {}
+        if (sort === 'most_commented') {
+            orderBy = { comments: { _count: 'desc' } }
+        } else if (sort === 'az') {
+            orderBy = { title: 'asc' }
+        } else {
+            orderBy = { publishedAt: 'desc' }
+        }
+
+        const posters = await prisma.poster.findMany({
+            where,
+            orderBy,
+            include: {
+                _count: {
+                    select: { comments: true },
+                },
+            },
+        })
+
+        return (
+            <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">
+                {/* Header Branding */}
+                <header className="bg-forge-teal px-6 py-4 shadow-md">
+                    <div className="mx-auto flex max-w-7xl items-center justify-between">
+                        <Link href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-white/20">
+                                <span className="text-xl font-black text-forge-teal">F</span>
+                            </div>
+                            <h1 className="text-lg font-bold tracking-tight text-white sm:text-xl">
+                                Forge AHEAD Center
+                            </h1>
                         </Link>
+
+                        <div className="flex items-center gap-4">
+                            <Link
+                                href={`/sessions/${sessionSlug}/hall`}
+                                className="flex items-center gap-2 rounded-full bg-white/10 hover:bg-white/20 px-4 py-2 text-sm font-bold text-white transition-all ring-1 ring-white/20 hover:ring-white/40 group"
+                            >
+                                <span className="hidden sm:inline">Explore the Hall</span>
+                                <span className="sm:hidden">Hall View</span>
+                                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                            </Link>
+                        </div>
                     </div>
-                </div>
-            </header>
+                </header>
 
-            <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-                {/* Gallery Header */}
-                <div className="mb-12 flex flex-col items-center text-center">
-                    <h1 className="text-4xl font-black tracking-tight text-zinc-900 sm:text-5xl dark:text-zinc-100">
-                        Virtual Poster Gallery
-                    </h1>
-                    <p className="mt-4 max-w-2xl text-lg text-zinc-600 dark:text-zinc-400">
-                        Explore research from our scholars. Each poster includes a 5-minute summary and a space for conversation.
-                    </p>
-                </div>
-
-                {/* Filters */}
-                <PosterFilters tags={allTags} />
-
-                {/* Grid */}
-                {posters.length > 0 ? (
-                    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {posters.map((poster) => (
-                            <PosterCard key={poster.id} sessionSlug={sessionSlug} poster={poster as any} />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="flex flex-col items-center justify-center py-20">
-                        <p className="text-lg font-medium text-zinc-600 dark:text-zinc-400">
-                            No posters found matching your criteria.
+                <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+                    {/* Gallery Header */}
+                    <div className="mb-12 flex flex-col items-center text-center">
+                        <h1 className="text-4xl font-black tracking-tight text-zinc-900 sm:text-5xl dark:text-zinc-100">
+                            Virtual Poster Gallery
+                        </h1>
+                        <p className="mt-4 max-w-2xl text-lg text-zinc-600 dark:text-zinc-400">
+                            Explore research from our scholars. Each poster includes a 5-minute summary and a space for conversation.
                         </p>
                     </div>
-                )}
+
+                    {/* Filters */}
+                    <PosterFilters tags={allTags} />
+
+                    {/* Grid */}
+                    {posters.length > 0 ? (
+                        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                            {posters.map((poster) => (
+                                <PosterCard key={poster.id} sessionSlug={sessionSlug} poster={poster as any} />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center py-20">
+                            <p className="text-lg font-medium text-zinc-600 dark:text-zinc-400">
+                                No posters found matching your criteria.
+                            </p>
+                        </div>
+                    )}
+                </div>
             </div>
-        </div>
-    )
+        )
+    } catch (error) {
+        console.error('GalleryPage error:', error)
+        return (
+            <ErrorState
+                title="Gallery unavailable"
+                message="We ran into a problem loading posters. Please try again soon."
+            />
+        )
+    }
 }

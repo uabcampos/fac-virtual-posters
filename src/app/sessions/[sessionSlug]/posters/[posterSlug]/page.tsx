@@ -9,6 +9,7 @@ import { PosterStatus } from '@prisma/client'
 import { AudioPlayer } from '@/components/poster/AudioPlayer'
 import { ResourceList } from '@/components/poster/ResourceList'
 import { QRCodeModal } from '@/components/poster/QRCodeModal'
+import { PosterEngagement } from '@/components/poster/PosterEngagement'
 
 export const runtime = 'nodejs'
 
@@ -49,7 +50,7 @@ export default async function PosterDetailPage({ params }: PosterDetailPageProps
                 session: true,
                 resources: true,
                 _count: {
-                    select: { comments: true },
+                    select: { comments: true, views: true },
                 },
             },
         })
@@ -132,13 +133,20 @@ export default async function PosterDetailPage({ params }: PosterDetailPageProps
                                 <h1 className="mb-2 text-xl font-extrabold tracking-tight text-zinc-900 sm:text-2xl dark:text-zinc-100">
                                     {poster.title}
                                 </h1>
-                                <div className="mb-4 flex flex-wrap items-center gap-4 text-xs text-zinc-600 dark:text-zinc-400">
-                                    <span className="font-bold text-zinc-900 dark:text-zinc-100">{poster.scholarNames.join(', ')}</span>
-                                    <span className="hidden sm:inline">•</span>
-                                    <span>{poster.institutions.join(', ')}</span>
-                                </div>
+                            <div className="mb-4 flex flex-wrap items-center gap-4 text-xs text-zinc-600 dark:text-zinc-400">
+                                <span className="font-bold text-zinc-900 dark:text-zinc-100">{poster.scholarNames.join(', ')}</span>
+                                <span className="hidden sm:inline">•</span>
+                                <span>{poster.institutions.join(', ')}</span>
+                            </div>
 
-                                <PosterViewer imageUrl={poster.posterImageUrl} pdfUrl={poster.posterPdfUrl} />
+                            <PosterEngagement
+                                posterId={poster.id}
+                                initialUpvoteCount={poster.upvoteCount}
+                                initialViewCount={poster._count.views}
+                                initialCommentCount={poster._count.comments}
+                            />
+
+                            <PosterViewer imageUrl={poster.posterImageUrl} pdfUrl={poster.posterPdfUrl} />
                             </section>
 
                             {/* Highlighted Conversation Panel */}

@@ -6,9 +6,10 @@ import { useCallback, useState, useTransition } from 'react'
 
 interface PosterFiltersProps {
     tags: string[]
+    sessionId?: string
 }
 
-export function PosterFilters({ tags }: PosterFiltersProps) {
+export function PosterFilters({ tags, sessionId }: PosterFiltersProps) {
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
@@ -75,6 +76,8 @@ export function PosterFilters({ tags }: PosterFiltersProps) {
                     >
                         <option value="recently_active">Recently Active</option>
                         <option value="most_commented">Most Commented</option>
+                        <option value="most_upvoted">Most Upvoted</option>
+                        <option value="most_views">Most Views</option>
                         <option value="az">A – Z</option>
                     </select>
                 </div>

@@ -83,6 +83,27 @@ model Poster {
   updatedAt         DateTime       @updatedAt
   comments          Comment[]
   views             PosterView[]
+  upvoteCount       Int            @default(0)
+  upvotes           PosterUpvote[]
+  bookmarks         PosterBookmark[]
+}
+
+model PosterBookmark {
+  id        String   @id @default(uuid())
+  posterId  String
+  poster    Poster   @relation(fields: [posterId], references: [id], onDelete: Cascade)
+  visitorId String
+  createdAt DateTime @default(now())
+  @@unique([posterId, visitorId])
+}
+
+model PosterUpvote {
+  id        String   @id @default(uuid())
+  posterId  String
+  poster    Poster   @relation(fields: [posterId], references: [id], onDelete: Cascade)
+  visitorId String
+  createdAt DateTime @default(now())
+  @@unique([posterId, visitorId])
 }
 
 enum ResourceType {

@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { MessageSquare } from 'lucide-react'
+import { MessageSquare, Eye, ThumbsUp } from 'lucide-react'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { BookmarkButton } from './BookmarkButton'
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -19,13 +20,20 @@ interface PosterCardProps {
         whyThisMatters: string
         tags: string[]
         posterImageUrl: string
+        upvoteCount?: number
         _count: {
             comments: number
+            views?: number
         }
     }
+    bookmarked?: boolean
+    onBookmarkChange?: () => void
 }
 
-export function PosterCard({ sessionSlug, poster }: PosterCardProps) {
+export function PosterCard({ sessionSlug, poster, bookmarked = false, onBookmarkChange }: PosterCardProps) {
+    const views = poster._count?.views ?? 0
+    const upvotes = poster.upvoteCount ?? 0
+
     return (
         <Link
             href={`/sessions/${sessionSlug}/posters/${poster.slug}`}
@@ -40,9 +48,27 @@ export function PosterCard({ sessionSlug, poster }: PosterCardProps) {
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
-                <div className="absolute top-4 right-4 flex items-center gap-1 rounded-full bg-black/40 px-3 py-1 text-xs font-medium text-white backdrop-blur-md">
-                    <MessageSquare className="h-3.5 w-3.5" />
-                    {poster._count.comments}
+                <div className="absolute top-4 left-4 flex items-center gap-2">
+                    <BookmarkButton
+                        posterId={poster.id}
+                        bookmarked={bookmarked}
+                        onToggle={onBookmarkChange}
+                        className="shadow-sm"
+                    />
+                </div>
+                <div className="absolute top-4 right-4 flex flex-wrap justify-end gap-1.5">
+                    <span className="flex items-center gap-1 rounded-full bg-black/40 px-2.5 py-1 text-[10px] font-medium text-white backdrop-blur-md">
+                        <Eye className="h-3 w-3" />
+                        {views}
+                    </span>
+                    <span className="flex items-center gap-1 rounded-full bg-black/40 px-2.5 py-1 text-[10px] font-medium text-white backdrop-blur-md">
+                        <MessageSquare className="h-3 w-3" />
+                        {poster._count.comments}
+                    </span>
+                    <span className="flex items-center gap-1 rounded-full bg-black/40 px-2.5 py-1 text-[10px] font-medium text-white backdrop-blur-md">
+                        <ThumbsUp className="h-3 w-3" />
+                        {upvotes}
+                    </span>
                 </div>
             </div>
 

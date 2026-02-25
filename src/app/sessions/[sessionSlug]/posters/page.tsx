@@ -1,6 +1,6 @@
 import prisma from '@/lib/prisma'
 import Link from 'next/link'
-import { PosterCard } from '@/components/gallery/PosterCard'
+import { PosterGrid } from '@/components/gallery/PosterGrid'
 import { PosterFilters } from '@/components/gallery/PosterFilters'
 import { notFound } from 'next/navigation'
 import { SessionStatus, PosterStatus } from '@prisma/client'
@@ -82,6 +82,10 @@ export default async function GalleryPage({ params, searchParams }: GalleryPageP
         let orderBy: any = {}
         if (sort === 'most_commented') {
             orderBy = { comments: { _count: 'desc' } }
+        } else if (sort === 'most_upvoted') {
+            orderBy = { upvoteCount: 'desc' }
+        } else if (sort === 'most_views') {
+            orderBy = { views: { _count: 'desc' } }
         } else if (sort === 'az') {
             orderBy = { title: 'asc' }
         } else {
@@ -93,7 +97,7 @@ export default async function GalleryPage({ params, searchParams }: GalleryPageP
             orderBy,
             include: {
                 _count: {
-                    select: { comments: true },
+                    select: { comments: true, views: true },
                 },
             },
         })
@@ -137,22 +141,14 @@ export default async function GalleryPage({ params, searchParams }: GalleryPageP
                     </div>
 
                     {/* Filters */}
-                    <PosterFilters tags={allTags} />
+                    <PosterFilters tags={allTags} sessionId={session.id} />
 
-                    {/* Grid */}
-                    {posters.length > 0 ? (
-                        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                            {posters.map((poster) => (
-                                <PosterCard key={poster.id} sessionSlug={sessionSlug} poster={poster as any} />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center py-20">
-                            <p className="text-lg font-medium text-zinc-600 dark:text-zinc-400">
-                                No posters found matching your criteria.
-                            </p>
-                        </div>
-                    )}
+                    {/* Grid with All / Bookmarked tabs */}
+                    <PosterGrid
+                        sessionSlug={sessionSlug}
+                        sessionId={session.id}
+                        posters={posters as any}
+                    />
                 </div>
             </div>
         )

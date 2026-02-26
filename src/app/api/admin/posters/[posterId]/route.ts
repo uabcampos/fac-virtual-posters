@@ -1,12 +1,22 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { PosterStatus } from '@prisma/client'
 
+const ADMIN_COOKIE = 'fac_admin'
+
+function isAdmin(request: NextRequest) {
+    return request.cookies.get(ADMIN_COOKIE)?.value === '1'
+}
+
 export async function PATCH(
-    request: Request,
+    request: NextRequest,
     { params }: { params: Promise<{ posterId: string }> }
 ) {
     try {
+        if (!isAdmin(request)) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
         const { posterId } = await params
         const { status } = await request.json()
 
@@ -30,10 +40,14 @@ export async function PATCH(
 }
 
 export async function DELETE(
-    request: Request,
+    request: NextRequest,
     { params }: { params: Promise<{ posterId: string }> }
 ) {
     try {
+        if (!isAdmin(request)) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
         const { posterId } = await params
         await prisma.poster.delete({ where: { id: posterId } })
         return NextResponse.json({ success: true })

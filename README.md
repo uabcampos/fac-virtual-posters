@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Forge AHEAD Virtual Poster Sessions
 
-## Getting Started
+This is the codebase for the Forge AHEAD Center virtual poster gallery. It is a **Next.js App Router** application with:
 
-First, run the development server:
+- TypeScript + Tailwind
+- Prisma + Postgres (Neon on Netlify)
+- Static audio guides, interactive poster viewer, and structured conversations
+
+The goal is to provide a **fast, inclusive virtual poster experience** (no PDFs-only) with:
+
+- Poster gallery and “hall” view
+- 5‑minute summaries
+- Structured comments (questions, ideas, feedback)
+- Light analytics and engagement indicators
+
+---
+
+## Local setup
+
+**Requirements**
+
+- Node 20+
+- A Postgres database (Neon, Supabase, or local)
+
+**1. Install dependencies**
+
+```bash
+npm install
+```
+
+**2. Configure environment**
+
+Create a `.env` file at the project root:
+
+```bash
+DATABASE_URL="postgresql://user:password@host:port/db?sslmode=require"
+GEMINI_API_KEY="optional-google-tts-key"
+ADMIN_SECRET="set-a-long-random-string"
+```
+
+**3. Database workflow (important)**
+
+We use **Prisma Migrate** as the source of truth.
+
+- To sync schema and run migrations locally:
+
+```bash
+npx prisma migrate dev
+npx prisma db seed
+```
+
+- Do **not** run `prisma db push` against production. That bypasses migrations.
+
+**4. Run the dev server**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deployment (Netlify + Neon)
 
-## Learn More
+Netlify is configured via `netlify.toml` to:
 
-To learn more about Next.js, take a look at the following resources:
+```toml
+[build]
+  command = "npx prisma generate && npx prisma migrate deploy && npm run build"
+  publish = ".next"
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Environment variables required on Netlify:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `DATABASE_URL` – Neon connection string
+- `GEMINI_API_KEY` – for optional audio generation
+- `ADMIN_SECRET` – shared secret for the simple admin gate
 
-## Deploy on Vercel
+On each deploy, Netlify will:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Generate the Prisma client
+2. Apply any pending migrations to the Neon database
+3. Build the Next.js app
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Key routes
+
+- `/` – Landing page
+- `/sessions/[sessionSlug]/posters` – Poster gallery
+- `/sessions/[sessionSlug]/hall` – Spatial “poster hall”
+- `/sessions/[sessionSlug]/posters/[posterSlug]` – Poster detail
+- `/submit` – Public submission form
+- `/admin` – Admin dashboard (protected)
+
+API routes (all server‑side):
+
+- `/api/posters` – Gallery API (filters, sort)
+- `/api/posters/submit` – Create submission
+- `/api/posters/[posterId]/comments` – Comments + replies
+- `/api/posters/[posterId]/view` – View tracking
+- `/api/posters/[posterId]/bookmark` – Bookmark toggle
+- `/api/posters/[posterId]/upvote` – Upvote
+- `/api/me/bookmarks` – Current visitor’s bookmarks for a session
+- `/api/admin/*` – Admin moderation (requires `ADMIN_SECRET` gate)
+
+---
+
+## Development notes
+
+- **No direct DB access from the client.** All writes go through server routes with Zod validation.
+- **Images first.** Posters are rendered as images (with zoom and fullscreen), even if the source was a PDF.
+- **Copy style.** Plain language, no em‑dashes, avoid heavy jargon in UI strings.
+
+If you’re unsure about anything, check `build-instructions.md` for the original product spec and acceptance criteria.

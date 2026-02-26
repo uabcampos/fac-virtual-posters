@@ -1,11 +1,21 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 
+const ADMIN_COOKIE = 'fac_admin'
+
+function isAdmin(request: NextRequest) {
+    return request.cookies.get(ADMIN_COOKIE)?.value === '1'
+}
+
 export async function DELETE(
-    request: Request,
+    request: NextRequest,
     { params }: { params: Promise<{ commentId: string }> }
 ) {
     try {
+        if (!isAdmin(request)) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
         const { commentId } = await params
 
         // We also need to delete any replies to this comment to avoid foreign key issues

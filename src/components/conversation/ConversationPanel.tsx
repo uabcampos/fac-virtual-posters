@@ -21,9 +21,10 @@ interface Comment {
 interface ConversationPanelProps {
     posterId: string
     scholarName: string
+    canScholarReply?: boolean
 }
 
-export function ConversationPanel({ posterId, scholarName }: ConversationPanelProps) {
+export function ConversationPanel({ posterId, scholarName, canScholarReply = false }: ConversationPanelProps) {
     const [activeTab, setActiveTab] = useState<CommentType>(CommentType.QUESTION)
     const [comments, setComments] = useState<Comment[]>([])
     const [isLoading, setIsLoading] = useState(true)
@@ -83,6 +84,7 @@ export function ConversationPanel({ posterId, scholarName }: ConversationPanelPr
                     posterId={posterId}
                     type={activeTab}
                     scholarName={scholarName}
+                    canScholarReply={canScholarReply}
                     onSuccess={fetchComments}
                     placeholder={
                         activeTab === CommentType.QUESTION ? "Ask a question..." :

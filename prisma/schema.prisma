@@ -86,6 +86,8 @@ model Poster {
   upvoteCount       Int            @default(0)
   upvotes           PosterUpvote[]
   bookmarks         PosterBookmark[]
+  scholarToken      String?        @unique
+  @@index([sessionId, status, publishedAt])
 }
 
 model PosterBookmark {
@@ -140,6 +142,8 @@ model Comment {
   likeCount  Int         @default(0)
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
+  @@index([posterId, createdAt])
+  @@index([posterId, type])
 }
 
 model PosterView {
@@ -148,4 +152,5 @@ model PosterView {
   poster     Poster   @relation(fields: [posterId], references: [id])
   viewerHash String
   createdAt  DateTime @default(now())
+  @@index([posterId, createdAt])
 }

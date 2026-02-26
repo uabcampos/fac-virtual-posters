@@ -18,6 +18,9 @@ interface PosterDetailPageProps {
         sessionSlug: string
         posterSlug: string
     }>
+    searchParams: Promise<{
+        scholarToken?: string
+    }>
 }
 
 function ErrorState({ title, message }: { title: string; message: string }) {
@@ -31,8 +34,9 @@ function ErrorState({ title, message }: { title: string; message: string }) {
     )
 }
 
-export default async function PosterDetailPage({ params }: PosterDetailPageProps) {
+export default async function PosterDetailPage({ params, searchParams }: PosterDetailPageProps) {
     const { sessionSlug, posterSlug } = await params
+    const { scholarToken } = await searchParams
 
     if (!process.env.DATABASE_URL) {
         return (
@@ -69,6 +73,8 @@ export default async function PosterDetailPage({ params }: PosterDetailPageProps
         const currentIndex = allPosters.findIndex((p) => p.slug === posterSlug)
         const prevPoster = currentIndex > 0 ? allPosters[currentIndex - 1] : null
         const nextPoster = currentIndex < allPosters.length - 1 ? allPosters[currentIndex + 1] : null
+
+        const canScholarReply = Boolean(scholarToken && poster.scholarToken && scholarToken === poster.scholarToken)
 
         return (
             <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">
@@ -157,7 +163,11 @@ export default async function PosterDetailPage({ params }: PosterDetailPageProps
                                     </span>
                                     Join the Conversation
                                 </h2>
-                                <ConversationPanel posterId={poster.id} scholarName={poster.scholarNames[0]} />
+                                <ConversationPanel
+                                    posterId={poster.id}
+                                    scholarName={poster.scholarNames[0]}
+                                    canScholarReply={canScholarReply}
+                                />
                             </section>
                         </div>
 

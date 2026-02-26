@@ -1,12 +1,61 @@
 import prisma from '@/lib/prisma'
 import { PosterStatus } from '@prisma/client'
-import { CheckCircle, XCircle, Clock, MessageSquare } from 'lucide-react'
+import { CheckCircle, XCircle, Clock, MessageSquare, Lock } from 'lucide-react'
 import { AdminPosterCard } from '../../components/admin/AdminPosterCard'
 import { AdminCommentItem } from '../../components/admin/AdminCommentItem'
+import { cookies } from 'next/headers'
 
 export const dynamic = 'force-dynamic'
 
+const ADMIN_COOKIE = 'fac_admin'
+
 export default async function AdminPage() {
+    const cookieStore = await cookies()
+    const isAdmin = cookieStore.get(ADMIN_COOKIE)?.value === '1'
+
+    if (!isAdmin) {
+        return (
+            <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center px-4">
+                <div className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-xl ring-1 ring-zinc-200 dark:bg-zinc-900 dark:ring-zinc-800">
+                    <div className="mb-6 flex flex-col items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900">
+                            <Lock className="h-5 w-5" />
+                        </div>
+                        <div className="text-center">
+                            <h1 className="text-lg font-extrabold text-zinc-900 dark:text-zinc-50">Admin access</h1>
+                            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                                Enter the admin secret to review submissions and moderate comments.
+                            </p>
+                        </div>
+                    </div>
+                    <form method="POST" action="/api/admin/login" className="space-y-4">
+                        <div>
+                            <label className="mb-1 block text-xs font-bold text-zinc-700 dark:text-zinc-200 uppercase tracking-widest">
+                                Admin secret
+                            </label>
+                            <input
+                                type="password"
+                                name="secret"
+                                required
+                                className="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm outline-none focus:border-forge-teal focus:ring-1 focus:ring-forge-teal dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50"
+                                autoComplete="current-password"
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            className="w-full rounded-xl bg-forge-teal py-2.5 text-sm font-bold text-white shadow-lg hover:bg-forge-blue transition-colors"
+                        >
+                            Sign in
+                        </button>
+                        <p className="mt-2 text-center text-[10px] text-zinc-400">
+                            For internal use only. Do not share this link publicly.
+                        </p>
+                    </form>
+                </div>
+            </div>
+        )
+    }
+
     const [posters, recentComments] = await Promise.all([
         prisma.poster.findMany({
             orderBy: { createdAt: 'desc' },

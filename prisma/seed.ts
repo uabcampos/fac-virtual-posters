@@ -1,4 +1,5 @@
 import { PrismaClient, SessionStatus, PosterStatus, CommentType } from '@prisma/client'
+import { randomUUID } from 'crypto'
 
 const prisma = new PrismaClient()
 
@@ -299,6 +300,7 @@ async function main() {
                 slug,
                 status: PosterStatus.PUBLISHED,
                 publishedAt: new Date(),
+                scholarToken: randomUUID(),
                 posterPdfUrl: `/uploads/${p.file}`,
                 posterImageUrl: `/uploads/thumbnails/${p.thumbnail}`,
                 posterImageWidth: 1200,

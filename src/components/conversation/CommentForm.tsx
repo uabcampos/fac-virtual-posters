@@ -8,6 +8,7 @@ interface CommentFormProps {
     posterId: string
     type: CommentType
     scholarName: string
+    canScholarReply?: boolean
     parentId?: string
     placeholder: string
     buttonLabel: string
@@ -19,6 +20,7 @@ export function CommentForm({
     posterId,
     type,
     scholarName,
+    canScholarReply = false,
     parentId,
     placeholder,
     buttonLabel,
@@ -44,9 +46,9 @@ export function CommentForm({
                 body: JSON.stringify({
                     type,
                     content,
-                    authorName: isScholarMode ? scholarName : (isAnonymous ? null : authorName || 'Anonymous'),
-                    authorRole: isScholarMode ? 'Scholar' : null,
-                    isAnonymous: isScholarMode ? false : isAnonymous,
+                    authorName: isScholarMode && canScholarReply ? scholarName : (isAnonymous ? null : authorName || 'Anonymous'),
+                    authorRole: isScholarMode && canScholarReply ? 'Scholar' : null,
+                    isAnonymous: isScholarMode && canScholarReply ? false : isAnonymous,
                     parentId
                 }),
             })
@@ -94,7 +96,7 @@ export function CommentForm({
                     </div>
                 )}
 
-                {!isScholarMode && (
+                {canScholarReply && !isScholarMode && (
                     <button
                         type="button"
                         onClick={() => setIsAnonymous(!isAnonymous)}
